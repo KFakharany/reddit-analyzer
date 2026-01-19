@@ -257,7 +257,7 @@ class Report(Base):
     )
     report_type: Mapped[Optional[str]] = mapped_column(String(50))
     content: Mapped[Optional[str]] = mapped_column(Text)
-    metadata: Mapped[Optional[dict[str, Any]]] = mapped_column(JSONB)
+    report_metadata: Mapped[Optional[dict[str, Any]]] = mapped_column(JSONB)
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
 
     # Relationships

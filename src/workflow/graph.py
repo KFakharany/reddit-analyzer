@@ -240,7 +240,7 @@ def save_analysis_node(state: WorkflowState) -> dict[str, Any]:
                     collection_run_id=collection_run_id,
                     report_type="community_summary",
                     content=report_content,
-                    metadata={
+                    report_metadata={
                         "insights_count": len(synthesis.get("insights", [])),
                         "personas_count": len(synthesis.get("personas", [])),
                     },
@@ -463,17 +463,15 @@ def run_analysis(
     workflow = create_workflow()
     app = workflow.compile()
 
-    # Run workflow
-    final_state = None
-    for state in app.stream(initial_state):
-        final_state = state
+    # Run workflow and accumulate all state updates
+    accumulated_state = dict(initial_state)
 
-    # Get the actual state from the last node output
-    if final_state and isinstance(final_state, dict):
-        # LangGraph returns {node_name: state_update}
-        for node_output in final_state.values():
-            if isinstance(node_output, dict):
-                # Merge into a complete state
-                initial_state.update(node_output)
+    for state_update in app.stream(initial_state):
+        # LangGraph returns {node_name: partial_state_update}
+        if isinstance(state_update, dict):
+            for node_name, node_output in state_update.items():
+                if isinstance(node_output, dict):
+                    # Merge node's state update into accumulated state
+                    accumulated_state.update(node_output)
 
-    return initial_state
+    return accumulated_state

@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:16
@@ -9,9 +7,9 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dev_password}
       POSTGRES_DB: reddit_analyzer
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - reddit_analyzer_postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U reddit_analyzer -d reddit_analyzer"]
@@ -19,6 +17,8 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
+    networks:
+      - reddit_analyzer_network
 
   pgadmin:
     image: dpage/pgadmin4
@@ -27,12 +27,18 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@local.dev
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
-      - "5050:80"
+      - "5051:80"
     depends_on:
       postgres:
         condition: service_healthy
     restart: unless-stopped
+    networks:
+      - reddit_analyzer_network
 
 volumes:
-  postgres_data:
+  reddit_analyzer_postgres_data:
     driver: local
+
+networks:
+  reddit_analyzer_network:
+    driver: bridge

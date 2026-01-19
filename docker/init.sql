@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS reports (
     collection_run_id INTEGER REFERENCES collection_runs(id) ON DELETE CASCADE,
     report_type VARCHAR(50),
     content TEXT,
-    metadata JSONB,
+    report_metadata JSONB,
     created_at TIMESTAMP DEFAULT NOW()
 );
 

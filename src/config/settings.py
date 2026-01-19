@@ -1,17 +1,22 @@
 """Global settings and configuration for Reddit Analyzer."""
 
 from functools import lru_cache
+from pathlib import Path
 from typing import Literal
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# Project root directory (where .env file is located)
+PROJECT_ROOT = Path(__file__).parent.parent.parent
+ENV_FILE_PATH = PROJECT_ROOT / ".env"
 
 
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=str(ENV_FILE_PATH),
         env_file_encoding="utf-8",
         case_sensitive=False,
         extra="ignore",
@@ -19,7 +24,7 @@ class Settings(BaseSettings):
 
     # Database Configuration
     postgres_host: str = Field(default="localhost")
-    postgres_port: int = Field(default=5432)
+    postgres_port: int = Field(default=5433)
     postgres_user: str = Field(default="reddit_analyzer")
     postgres_password: str = Field(default="dev_password")
     postgres_db: str = Field(default="reddit_analyzer")

@@ -1,6 +1,6 @@
 """State module for LangGraph workflows."""
 
-from .schema import WorkflowState, CollectionState, AnalysisState
+from .schema import WorkflowState, CollectionState, AnalysisState, create_initial_state
 from .enums import (
     WorkflowStatus,
     SkillLevel,
@@ -18,4 +18,5 @@ __all__ = [
     "SentimentType",
     "SkepticismLevel",
     "AnalysisPhase",
+    "create_initial_state",
 ]

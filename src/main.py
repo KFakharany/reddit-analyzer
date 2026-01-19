@@ -11,7 +11,6 @@ from rich.table import Table
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
-from src.config import get_settings
 from src.database import get_db_manager
 from src.database.repositories import (
     CommunityRepository,
@@ -70,16 +69,6 @@ def analyze(
         reddit-analyzer analyze PromptEngineering Entrepreneur --posts-limit 50
         reddit-analyzer analyze micro_saas --skip-ai
     """
-    settings = get_settings()
-
-    # Check for API key if AI is enabled
-    if not skip_ai and not settings.anthropic_api_key:
-        console.print(
-            "[red]Error:[/red] ANTHROPIC_API_KEY not set. "
-            "Set it in .env or use --skip-ai flag."
-        )
-        sys.exit(1)
-
     # Check database connection
     db = get_db_manager()
     if not db.check_connection():
@@ -259,15 +248,6 @@ def history(community: str, limit: int):
 @click.option("--output", "-o", default="./output", help="Output directory.")
 def reanalyze(run_id: int, skip_ai: bool, output: str):
     """Re-run AI analysis on existing data."""
-    settings = get_settings()
-
-    if not skip_ai and not settings.anthropic_api_key:
-        console.print(
-            "[red]Error:[/red] ANTHROPIC_API_KEY not set. "
-            "Set it in .env or use --skip-ai flag."
-        )
-        sys.exit(1)
-
     db = get_db_manager()
     if not db.check_connection():
         console.print("[red]Error:[/red] Cannot connect to database.")
@@ -346,7 +326,7 @@ def export(run_id: int, output_format: str, output: Optional[str]):
             ext = ".md"
         else:
             import json
-            content = json.dumps(report.metadata, indent=2)
+            content = json.dumps(report.report_metadata, indent=2)
             ext = ".json"
 
         if output:

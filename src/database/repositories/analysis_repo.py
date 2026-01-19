@@ -236,7 +236,7 @@ class AnalysisRepository:
         collection_run_id: int,
         report_type: str,
         content: str,
-        metadata: Optional[dict[str, Any]] = None,
+        report_metadata: Optional[dict[str, Any]] = None,
     ) -> Report:
         """Create a new report.
 
@@ -244,7 +244,7 @@ class AnalysisRepository:
             collection_run_id: The collection run ID.
             report_type: The type of report.
             content: Report content (markdown).
-            metadata: Additional metadata.
+            report_metadata: Additional metadata.
 
         Returns:
             The new Report.
@@ -253,7 +253,7 @@ class AnalysisRepository:
             collection_run_id=collection_run_id,
             report_type=report_type,
             content=content,
-            metadata=metadata,
+            report_metadata=report_metadata,
         )
         self.session.add(report)
         self.session.flush()
